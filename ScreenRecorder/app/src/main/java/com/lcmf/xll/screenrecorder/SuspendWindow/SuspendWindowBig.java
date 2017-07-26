@@ -1,5 +1,6 @@
 package com.lcmf.xll.screenrecorder.SuspendWindow;
 
+import android.os.Environment;
 import android.widget.LinearLayout;
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +10,12 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.lcmf.xll.screenrecorder.R;
+import com.lcmf.xll.screenrecorder.SceenShot.ScreenShot;
+import com.lcmf.xll.screenrecorder.ScreenApplication;
+
+import java.io.File;
+
+import static com.lcmf.xll.screenrecorder.MainActivity.getDateTime;
 
 /**
  * Created by Administrator on 2017/7/16 0016.
@@ -52,4 +59,6 @@ public class SuspendWindowBig extends LinearLayout {
 			}
 		});
 	}
+
+
 }

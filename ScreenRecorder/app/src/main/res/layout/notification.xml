@@ -22,20 +22,22 @@
         android:gravity="center_vertical"
         android:orientation="horizontal" >
 
-        <Button
+        <ImageButton
             android:id="@+id/btn_pause"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:text="暂停" />
+            style="@style/btn_custom_style"
+            android:contentDescription="暂停"
+            android:src="@drawable/btn_pause"/>
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <ImageButton
             android:id="@+id/btn_start"
+            style="@style/btn_custom_style"
+            android:contentDescription="录制"
+            android:src="@drawable/btn_play"
             android:text="开始"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <ImageButton
+            style="@style/btn_custom_style"
+            android:contentDescription="停止"
+            android:src="@drawable/btn_stop"
             android:id="@+id/btn_stop"
             android:text="停止"/>
 
