@@ -58,7 +58,10 @@ import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.lcmf.xll.screenrecorder.SceenShot.PermissionActivity;
 import com.lcmf.xll.screenrecorder.SceenShot.RecordService;
+import com.lcmf.xll.screenrecorder.SceenShot.ScreenCutService;
+import com.lcmf.xll.screenrecorder.SceenShot.ScreenService;
 import com.lcmf.xll.screenrecorder.SceenShot.ScreenShot;
 import com.lcmf.xll.screenrecorder.SuspendWindow.SuspendWindowService;
 import com.lcmf.xll.screenrecorder.ViewFragment.InnerFragment;
@@ -71,6 +74,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
 
+import static com.lcmf.xll.screenrecorder.SceenShot.PermissionActivity.REQUEST_MEDIA_PROJECTION;
 import static com.lcmf.xll.screenrecorder.ViewFragment.InnerFragment.IsVisible;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -137,6 +141,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 	NotificationCompat.Builder mBuilder;
 	NotificationManager mNotificationManager;
 	private static boolean bRecoded = false;
+
+	private Intent intent = null;
+	private int result = 0;
 
 	//fragment界面切换
 	private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -230,11 +237,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		width = metric.widthPixels;
 		height = metric.heightPixels;
 		dpi = metric.densityDpi;
-
 		projectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
-
 		Intent intent = new Intent(this, RecordService.class);
 		bindService(intent, connection, BIND_AUTO_CREATE);
+	}
+
+
+	//截屏服务
+	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
+	private void startIntent(){
+		if(intent != null && result != 0){
+			((ScreenApplication)getApplication()).setResult(result);
+			((ScreenApplication)getApplication()).setIntent(intent);
+			Intent intent = new Intent(getApplicationContext(), ScreenService.class);
+			showTips("启动服务");
+			startService(intent);
+		}else{
+			startActivityForResult(projectionManager.createScreenCaptureIntent(), REQUEST_MEDIA_PROJECTION);
+			((ScreenApplication)getApplication()).setMediaProjectionManager(projectionManager);
+		}
 	}
 
 	@Override
@@ -275,13 +296,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		} else if (id == R.id.nav_gallery) {
 			showTips("gallery");
 		} else if (id == R.id.nav_slideshow) {
+			//截取Activity
+			showTips("截取Activity");
 			moveTaskToBack(true);
 			String filePath = Environment.getExternalStorageDirectory() + "/DCIM/"
 					+ getDateTime() + ".png";
 			ScreenShot.shoot(MainActivity.this, new File(filePath));
 
 		} else if (id == R.id.nav_manage) {
-
+			//启动截屏服务
+			showTips("正在打开服务");
+			startIntent();
 		} else if (id == R.id.nav_share) {
 
 		} else if (id == R.id.nav_send) {
@@ -450,6 +475,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 			mediaProjection = projectionManager.getMediaProjection(resultCode, data);
 			recordService.setMediaProject(mediaProjection);
 			recordService.startRecord();
+		}else if (requestCode == REQUEST_MEDIA_PROJECTION) {
+//			if (resultCode != Activity.RESULT_OK) {
+//				return;
+//			}else if(data != null && resultCode != 0){
+			if(data != null && resultCode != 0){
+				result = resultCode;
+				intent = data;
+				((ScreenApplication)getApplication()).setResult(resultCode);
+				((ScreenApplication)getApplication()).setIntent(data);
+				Intent intent = new Intent(getApplicationContext(), ScreenService.class);
+				showTips("启动服务结果");
+				startService(intent);
+				finish();
+			}
 		}
 // else if(requestCode == SCREEN_SHOT){
 //				if(resultCode == RESULT_OK){
@@ -461,6 +500,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //				}
 //			}
 	}
+
 
 
 	/*

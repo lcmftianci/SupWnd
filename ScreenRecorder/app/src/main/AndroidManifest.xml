@@ -32,8 +32,13 @@
             </intent-filter>
         </activity>
 
+        <!--<activity android:name="com.lcmf.xll.screenrecorder.SceenShot.PermissionActivity"-->
+                  <!--android:theme="@android:style/Theme.Dialog" />-->
+
         <service android:name=".SuspendWindow.SuspendWindowService"></service>
         <service android:name=".SceenShot.RecordService"></service>
+
+        <service android:name=".SceenShot.ScreenService"></service>
     </application>
 
 </manifest>

@@ -3,8 +3,11 @@ package com.lcmf.xll.screenrecorder.SceenShot;
 import android.annotation.TargetApi;
 import android.app.Service;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
+import android.media.Image;
+import android.media.ImageReader;
 import android.media.MediaRecorder;
 import android.media.projection.MediaProjection;
 import android.os.Binder;
@@ -12,10 +15,15 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.HandlerThread;
 import android.os.IBinder;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+
+import static com.lcmf.xll.screenrecorder.MainActivity.TAG;
+
 /**
  * Created by Administrator on 2017/7/21 0021.
  */
@@ -56,6 +64,7 @@ public class RecordService extends Service {
 		super.onDestroy();
 	}
 
+	//获取MediaProjection
 	public void setMediaProject(MediaProjection project) {
 		mediaProjection = project;
 	}
@@ -92,9 +101,9 @@ public class RecordService extends Service {
 		mediaRecorder.reset();
 		virtualDisplay.release();
 		mediaProjection.stop();
-
 		return true;
 	}
+
 	@TargetApi(Build.VERSION_CODES.M)
 	private void createVirtualDisplay() {
 		virtualDisplay = mediaProjection.createVirtualDisplay("MainScreen", width, height, dpi,
